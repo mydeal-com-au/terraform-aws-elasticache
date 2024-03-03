@@ -108,6 +108,11 @@ variable "redis_version" {
   default     = "3.2.10"
 }
 
+variable "parameter_group_name" {
+  description = "Use an existing parameter group instead of automatically creating one"
+  type        = string
+  default     = ""
+}
 
 variable "redis_parameters" {
   description = "additional parameters modifyed in parameter group"
