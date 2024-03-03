@@ -3,7 +3,7 @@ output "redis_security_group_id" {
 }
 
 output "parameter_group" {
-  value = try(var.parameter_group_name, "") != "" ? var.parameter_group_name : aws_elasticache_parameter_group.redis_parameter_group.id
+  value = try(var.parameter_group_name, "") != "" ? var.parameter_group_name : try(aws_elasticache_parameter_group.redis_parameter_group[0].id, "")
 }
 
 output "redis_subnet_group_name" {
