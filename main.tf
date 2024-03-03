@@ -21,7 +21,7 @@ resource "aws_elasticache_replication_group" "redis" {
   auth_token                  = var.transit_encryption_enabled ? var.auth_token : null
   engine_version              = var.redis_version
   port                        = var.redis_port
-  parameter_group_name        = aws_elasticache_parameter_group.redis_parameter_group.id
+  parameter_group_name        = try(var.parameter_group_name, "") != "" ? var.parameter_group_name : aws_elasticache_parameter_group.redis_parameter_group[0].id
   subnet_group_name           = aws_elasticache_subnet_group.redis_subnet_group.id
   security_group_names        = var.security_group_names
   security_group_ids          = [aws_security_group.redis_security_group.id]
@@ -39,6 +39,8 @@ resource "aws_elasticache_replication_group" "redis" {
 }
 
 resource "aws_elasticache_parameter_group" "redis_parameter_group" {
+  count = try(var.parameter_group_name, "") != "" ? 0 : 1
+
   name = replace(format("%.255s", lower(replace("tf-redis-${var.name}-${var.env}-${var.vpc_id}-${random_id.salt.hex}", "_", "-"))), "/\\s/", "-")
 
   description = "Terraform-managed ElastiCache parameter group for ${var.name}-${var.env}-${var.vpc_id}"
